@@ -13,7 +13,7 @@ def verify(request: Request):
     mode = request.query_params.get("hub.mode")
     token = request.query_params.get("hub.verify_token")
     challenge = request.query_params.get("hub.challenge")
-    verify_token = "hello"
+    verify_token = "rishabh"
 
     # Check if a token and mode were sent
     if mode and token:
