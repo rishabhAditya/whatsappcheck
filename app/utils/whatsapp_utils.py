@@ -2,6 +2,7 @@ import json
 import requests
 from dotenv import load_dotenv
 import os
+from app.utils.llm_utils import generate_llm_response
 load_dotenv()
 
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
@@ -60,7 +61,8 @@ def process_whatsapp_message(body):
             # Get the incoming message text
             incoming_message = message["text"]["body"]
             # Generate response in uppercase
-            response_text = generate_response(incoming_message)
+            # response_text = generate_response(incoming_message)
+            response_text =  generate_llm_response(incoming_message)
             # Prepare the message data
             message_data = get_text_message_input(
                 recipient=message["from"],
