@@ -1,6 +1,10 @@
 python-dotenv
 fastapi
 uvicorn
+<<<<<<< HEAD
 requests
 langchain-openai
 langchain
+=======
+requests
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6

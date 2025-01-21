@@ -2,6 +2,7 @@ import json
 import requests
 from dotenv import load_dotenv
 import os
+<<<<<<< HEAD
 # from app.utils.llm_utils import generate_llm_response
 from app.utils.database import add_or_update_user
 from app.utils.validation_util import validate_email
@@ -11,11 +12,14 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+=======
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
 load_dotenv()
 
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 RECIPIENT_NUMBER = os.getenv("RECIPIENT_NUMBER")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
+<<<<<<< HEAD
 VERSION = os.getenv("VERSION")
 
 user_data = {}
@@ -51,6 +55,29 @@ def get_language_option_input(recipient):
                 }
             }
         })
+=======
+
+VERSION = os.getenv("VERSION")
+
+
+def generate_response(response):
+    # Return text in uppercase
+    return response.upper()
+
+
+def is_valid_whatsapp_message(body):
+    """
+    Check if the incoming webhook event has a valid WhatsApp message structure.
+    """
+    return (
+        body.get("object")
+        and body.get("entry")
+        and body["entry"][0].get("changes")
+        and body["entry"][0]["changes"][0].get("value")
+        and body["entry"][0]["changes"][0]["value"].get("messages")
+        and body["entry"][0]["changes"][0]["value"]["messages"][0]
+    )
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
 
 def get_text_message_input(recipient, text):
     return json.dumps(
@@ -63,7 +90,10 @@ def get_text_message_input(recipient, text):
         }
     )
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
 def send_message(data):
     headers = {
         "Content-type": "application/json",
@@ -84,6 +114,7 @@ def send_message(data):
         return response
 
 
+<<<<<<< HEAD
 def get_or_create_user_data(phone_number):
     """Initialize or get existing user data"""
     if phone_number not in user_data:
@@ -320,3 +351,20 @@ def mark_message_as_read(message_id, phone_number):
         logger.error(f"Error marking message as read: {str(e)}")
 
 # [Previous helper functions remain the same: get_text_message_input, send_message, get_or_create_user_data, get_language_option_input]
+=======
+def process_whatsapp_message(body):
+    wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
+    name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
+
+    message = body["entry"][0]["changes"][0]["value"]["messages"][0]
+    message_body = message["text"]["body"]
+
+
+    response = generate_response(message_body)
+
+    data = get_text_message_input(
+        recipient=RECIPIENT_NUMBER, text=response
+    )
+
+    send_message(data)
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6

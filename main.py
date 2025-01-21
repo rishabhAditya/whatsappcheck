@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #TUNNEL used:https://pinggy.io/
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
@@ -9,6 +10,16 @@ from app.utils.database import session, User, add_or_update_user
 from app.utils.whatsapp_utils import process_whatsapp_message
 # from app.utils.test import process_whatsapp_message
 import json
+=======
+
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
+
+from app.utils.whatsapp_utils import is_valid_whatsapp_message,process_whatsapp_message
+
+
+
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
 
 
 def verify(request: Request):
@@ -24,8 +35,12 @@ def verify(request: Request):
         if mode == "subscribe" and token == verify_token:
             # Respond with 200 OK and challenge token from the request
             print("WEBHOOK_VERIFIED")
+<<<<<<< HEAD
             # return PlainTextResponse(content=challenge, status_code=200)
             return Response(content=challenge)
+=======
+            return challenge
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
         else:
             # Responds with '403 Forbidden' if verify tokens do not match
             print("VERIFICATION_FAILED")
@@ -40,6 +55,7 @@ def verify(request: Request):
 
 app = FastAPI()
 
+<<<<<<< HEAD
 class UserCreate(BaseModel):
     phone_number: str
     name: str
@@ -51,10 +67,14 @@ def get_db():
         yield db
     finally:
         db.close()
+=======
+
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
 
 @app.get("/")
 def home():
     return "WhatsApp OpenAI Webhook is listening!"
+<<<<<<< HEAD
 @app.get("/users/")
 def read_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
@@ -68,11 +88,15 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         return {"message": "User added or updated successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+=======
+
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
 
 @app.get("/webhook")
 def webhook(request: Request):
     return verify(request)
 
+<<<<<<< HEAD
 
 @app.post("/webhook")
 async def webhook(request: Request):
@@ -83,3 +107,19 @@ async def webhook(request: Request):
     return Response(status_code=status_code)
 
 
+=======
+@app.post("/webhook")
+def handle_message(request: Request):
+    body = request.json()
+    if is_valid_whatsapp_message(body):
+        process_whatsapp_message(body)
+        return JSONResponse(content={"status": "ok"}, status_code=200)
+    return JSONResponse(content={"status": "invalid message"}, status_code=400)
+
+
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+>>>>>>> 37693cf6652e814c49a60b2d12da6ab1372128a6
