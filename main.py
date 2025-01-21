@@ -1,8 +1,13 @@
-
-from fastapi import FastAPI, Request, HTTPException
+#TUNNEL used:https://pinggy.io/
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.utils.database import session, User, add_or_update_user
 
 from app.utils.whatsapp_utils import process_whatsapp_message
+# from app.utils.test import process_whatsapp_message
 import json
 
 
@@ -35,12 +40,34 @@ def verify(request: Request):
 
 app = FastAPI()
 
+class UserCreate(BaseModel):
+    phone_number: str
+    name: str
+    email: str
 
+def get_db():
+    db = session
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.get("/")
 def home():
     return "WhatsApp OpenAI Webhook is listening!"
+@app.get("/users/")
+def read_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
 
+# Endpoint to add or update a user
+@app.post("/users/")
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    try:
+        add_or_update_user(user.phone_number, user.name, user.email)
+        return {"message": "User added or updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/webhook")
 def webhook(request: Request):
@@ -51,7 +78,7 @@ def webhook(request: Request):
 async def webhook(request: Request):
     # Log incoming messages
     body = await request.json()
-    print("Incoming webhook message:", json.dumps(body, indent=2))
+    # print("Incoming webhook message:", json.dumps(body, indent=2))
     status_code  = process_whatsapp_message(body)
     return Response(status_code=status_code)
 
